@@ -31,7 +31,7 @@ void CheckShaderCompilation(GLuint shader) {
 GLuint CompileShader(GLuint type, const std::string source) {
   GLuint shader = glCreateShader(type);
   const char *src = source.c_str();
-  glShaderSource(shader, 1,&src , nullptr);
+  glShaderSource(shader, 1, &src, nullptr);
   glCompileShader(shader);
 
   // Adicione esta linha para verificar a compilação
@@ -104,12 +104,20 @@ void GetOpenGLVersionInfo() {
 }
 void VertexSpecification() {
   const std::vector<GLfloat> vertexData{
-      -0.8f, -0.8f, 0.0f, // ve1
-      1.0f,  0.0f,  0.0f, // color
-      0.8f,  -0.8f, 0.0f, // ve2
-      0.0f,  1.0f,  0.0f, // color
-      0.0f,  0.8f,  0.0f, // ve3
-      0.0f,  0.0f,  1.0f  // color
+      // first triangle
+      -0.5f, -0.5f, 0.0f, // ve1
+      1.0f, 0.0f, 0.0f,   // color
+      0.5f, -0.5f, 0.0f,  // vej
+      0.0f, 1.0f, 0.0f,   // color
+      -0.5f, 0.5f, 0.0f,  // ve3
+      0.0f, 0.0f, 1.0f,   // color
+      // second triangle
+      0.5f, -0.5f, 0.0f, // vec1
+      0.0f, 1.0f, 0.0f,  // color
+      0.5f, 0.5f, 0.0f,  // vec2
+      1.0f, 0.0f, 0.0f,  // color
+      -0.5f, 0.5f, 0.0f, // vec3
+      0.0f, 0.0f, 1.0f,  // color
   };
 
   const std::vector<GLfloat> vertexColors{};
@@ -122,20 +130,15 @@ void VertexSpecification() {
   glGenBuffers(1, &gVertexBufferObject);
   glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
   // Put info on our VBO
-  glBufferData(
-             GL_ARRAY_BUFFER,
-               vertexData.size() * sizeof(GLfloat),
-               vertexData.data(),
-               GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(GLfloat),
+               vertexData.data(), GL_STATIC_DRAW);
 
   glEnableVertexAttribArray(0);
   // How VAO will read our data
   glVertexAttribPointer(0,
                         3,        // Size of informations (x,y,z)
                         GL_FLOAT, // Type of information
-                        GL_FALSE, 
-                        sizeof(GL_FLOAT)*6,
-                        (void *)0
+                        GL_FALSE, sizeof(GL_FLOAT) * 6, (void *)0
 
   );
   // generate our second VBO for colors
@@ -145,14 +148,8 @@ void VertexSpecification() {
                vertexData.data(), GL_STATIC_DRAW);
   // Link attributes in our VAO
   glEnableVertexAttribArray(1);
-  glVertexAttribPointer(
-      1,
-      3,
-      GL_FLOAT,
-      GL_FALSE,
-      sizeof(GL_FLOAT)*6,
-      (void*)(sizeof(GL_FLOAT)*3)
-      );
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 6,
+                        (void *)(sizeof(GL_FLOAT) * 3));
 
   glBindVertexArray(0);
   glDisableVertexAttribArray(0);
@@ -207,7 +204,7 @@ void PreDraw() {
   glDisable(GL_CULL_FACE);
   CreateGraphicsPipeline();
   glViewport(0, 0, gScreenWidth, gScreenHeight);
-  glClearColor(0.04f,0.36f,0.45f, 1.0f);
+  glClearColor(0.04f, 0.36f, 0.45f, 1.0f);
   glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   glUseProgram(gGraphicsPipelineShaderProgram);
 }
@@ -215,7 +212,7 @@ void Draw() {
   glBindVertexArray(gVertexArrayObject);
   glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
 
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 void MainLoop() {
   while (!gQuit) {
