@@ -16,6 +16,7 @@ GLuint gVertexArrayObject;
 // VBO
 GLuint gVertexBufferObject;
 GLuint gVertexBufferObject2;
+GLuint gIndexBufferObject = 0;
 // Create Program for our shaders
 GLuint gGraphicsPipelineShaderProgram = 0;
 void CheckShaderCompilation(GLuint shader) {
@@ -104,23 +105,18 @@ void GetOpenGLVersionInfo() {
 }
 void VertexSpecification() {
   const std::vector<GLfloat> vertexData{
-      // first triangle
-      -0.5f, -0.5f, 0.0f, // ve1
+
+      -0.5f, -0.5f, 0.0f, // vec0
       1.0f, 0.0f, 0.0f,   // color
-      0.5f, -0.5f, 0.0f,  // vej
+      0.5f, -0.5f, 0.0f,  // vec1
       0.0f, 1.0f, 0.0f,   // color
-      -0.5f, 0.5f, 0.0f,  // ve3
+      -0.5f, 0.5f, 0.0f,  // vec2
       0.0f, 0.0f, 1.0f,   // color
-      // second triangle
-      0.5f, -0.5f, 0.0f, // vec1
-      0.0f, 1.0f, 0.0f,  // color
-      0.5f, 0.5f, 0.0f,  // vec2
-      1.0f, 0.0f, 0.0f,  // color
-      -0.5f, 0.5f, 0.0f, // vec3
-      0.0f, 0.0f, 1.0f,  // color
+      0.5f, 0.5f, 0.0f,   // vec3
+      1.0f, 0.0f, 0.0f,   // color
   };
 
-  const std::vector<GLfloat> vertexColors{};
+
 
   // Create VAO and bind
   glGenVertexArrays(1, &gVertexArrayObject);
@@ -132,6 +128,17 @@ void VertexSpecification() {
   // Put info on our VBO
   glBufferData(GL_ARRAY_BUFFER, vertexData.size() * sizeof(GLfloat),
                vertexData.data(), GL_STATIC_DRAW);
+
+  const std::vector<GLuint> indexBufferData = {2,0,1,3,2,1};
+  //setup index buffer object 
+  glGenBuffers(1, &gIndexBufferObject);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, gIndexBufferObject);
+  glBufferData(
+      GL_ELEMENT_ARRAY_BUFFER,
+      indexBufferData.size()*sizeof(GLuint),
+      indexBufferData.data(),
+      GL_STATIC_DRAW
+      );
 
   glEnableVertexAttribArray(0);
   // How VAO will read our data
@@ -212,7 +219,8 @@ void Draw() {
   glBindVertexArray(gVertexArrayObject);
   glBindBuffer(GL_ARRAY_BUFFER, gVertexBufferObject);
 
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+  //glDrawArrays(GL_TRIANGLES, 0, 6);
+  glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
 }
 void MainLoop() {
   while (!gQuit) {
